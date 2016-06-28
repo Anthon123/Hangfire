@@ -30,6 +30,8 @@ using Hangfire.SqlServer.Entities;
 using Hangfire.States;
 using Hangfire.Storage;
 using Hangfire.Storage.Monitoring;
+using Hangfire.Dashboard;
+using System.Diagnostics;
 
 // ReSharper disable RedundantAnonymousTypePropertyName
 
@@ -47,17 +49,27 @@ namespace Hangfire.SqlServer
             _storage = storage;
             _jobListLimit = jobListLimit;
         }
-
-        public long ScheduledCount()
+               
+        public long JobCountByStateName(Dictionary<string, string> parameters)
         {
-            return UseConnection((connection, transaction) => 
-                GetNumberOfJobsByStateName(connection, transaction, ScheduledState.StateName));
-        }
+            var allowedStates = new string[]{
+                FailedState.StateName,
+                SucceededState.StateName,
+                ScheduledState.StateName,
+                ProcessingState.StateName,
+                DeletedState.StateName };
 
-        public long EnqueuedCount(string queue)
+            if (!allowedStates.Contains(parameters["stateName"])) throw new Exception("JobCountByStateName() method does not support the jobstate: " + parameters["stateName"]);
+
+            return UseConnection((connection, transaction) => 
+                GetNumberOfJobsByStateName(connection, transaction, parameters));
+        }
+ 
+        /* 4 parameter option has only been implemented on SqlServer database version! See code in file: "SqlServerJobQueueMonitoringApi.cs" */
+        public long EnqueuedCount(string queue, Dictionary<string,string> countParameters)
         {
             var queueApi = GetQueueApi(queue);
-            var counters = queueApi.GetEnqueuedAndFetchedCount(queue);
+            var counters = queueApi.GetEnqueuedAndFetchedCount(queue, countParameters);
 
             return counters.EnqueuedCount ?? 0;
         }
@@ -73,21 +85,21 @@ namespace Hangfire.SqlServer
         public long FailedCount()
         {
             return UseConnection((connection, transaction) => 
-                GetNumberOfJobsByStateName(connection, transaction, FailedState.StateName));
+                GetNumberOfJobsByStateName(connection, transaction, new Dictionary<string, string> { { "stateName", FailedState.StateName } }));
         }
 
         public long ProcessingCount()
         {
             return UseConnection((connection, transaction) => 
-                GetNumberOfJobsByStateName(connection, transaction, ProcessingState.StateName));
+                GetNumberOfJobsByStateName(connection, transaction, new Dictionary<string, string> { { "stateName", ProcessingState.StateName } }));
         }
 
-        public JobList<ProcessingJobDto> ProcessingJobs(int @from, int count)
+        public JobList<ProcessingJobDto> ProcessingJobs(Pager pager)
         {
             return UseConnection((connection, transaction) => GetJobs(
                 connection,
                 transaction,
-                from, count,
+                pager,
                 ProcessingState.StateName,
                 (sqlJob, job, stateData) => new ProcessingJobDto
                 {
@@ -97,12 +109,12 @@ namespace Hangfire.SqlServer
                 }));
         }
 
-        public JobList<ScheduledJobDto> ScheduledJobs(int @from, int count)
+        public JobList<ScheduledJobDto> ScheduledJobs(Pager pager)
         {
             return UseConnection((connection, transaction) => GetJobs(
                 connection,
                 transaction,
-                from, count,
+                pager,
                 ScheduledState.StateName,
                 (sqlJob, job, stateData) => new ScheduledJobDto
                 {
@@ -153,13 +165,12 @@ namespace Hangfire.SqlServer
             });
         }
 
-        public JobList<FailedJobDto> FailedJobs(int @from, int count)
+        public JobList<FailedJobDto> FailedJobs(Pager pager)
         {
             return UseConnection((connection, transaction) => GetJobs(
                 connection,
                 transaction,
-                from,
-                count,
+                pager,
                 FailedState.StateName,
                 (sqlJob, job, stateData) => new FailedJobDto
                 {
@@ -171,14 +182,13 @@ namespace Hangfire.SqlServer
                     FailedAt = JobHelper.DeserializeNullableDateTime(stateData["FailedAt"])
                 }));
         }
-
-        public JobList<SucceededJobDto> SucceededJobs(int @from, int count)
+        
+        public JobList<SucceededJobDto> SucceededJobs(Pager pager)
         {
             return UseConnection((connection, transaction) => GetJobs(
                 connection,
                 transaction,
-                from,
-                count,
+                pager,
                 SucceededState.StateName,
                 (sqlJob, job, stateData) => new SucceededJobDto
                 {
@@ -191,13 +201,12 @@ namespace Hangfire.SqlServer
                 }));
         }
 
-        public JobList<DeletedJobDto> DeletedJobs(int @from, int count)
+        public JobList<DeletedJobDto> DeletedJobs(Pager pager)
         {
             return UseConnection((connection, transaction) => GetJobs(
                 connection,
                 transaction,
-                from,
-                count,
+                pager,
                 DeletedState.StateName,
                 (sqlJob, job, stateData) => new DeletedJobDto
                 {
@@ -237,10 +246,10 @@ namespace Hangfire.SqlServer
             return result;
         }
 
-        public JobList<EnqueuedJobDto> EnqueuedJobs(string queue, int @from, int perPage)
+        public JobList<EnqueuedJobDto> EnqueuedJobs(string queue, Pager pager)
         {
             var queueApi = GetQueueApi(queue);
-            var enqueuedJobIds = queueApi.GetEnqueuedJobIds(queue, from, perPage);
+            var enqueuedJobIds = queueApi.GetEnqueuedJobIds(queue, @pager.FromRecord, pager.RecordsPerPage, pager);
 
             return UseConnection((connection, transaction) => EnqueuedJobs(connection, transaction, enqueuedJobIds.ToArray()));
         }
@@ -310,13 +319,13 @@ select * from [{_storage.SchemaName}].State where JobId = @id order by Id desc";
         public long SucceededListCount()
         {
             return UseConnection((connection, transaction) => 
-                GetNumberOfJobsByStateName(connection, transaction, SucceededState.StateName));
+                GetNumberOfJobsByStateName(connection, transaction, new Dictionary<string, string> { { "stateName", SucceededState.StateName } }));
         }
 
         public long DeletedListCount()
         {
             return UseConnection((connection, transaction) => 
-                GetNumberOfJobsByStateName(connection, transaction, DeletedState.StateName));
+                GetNumberOfJobsByStateName(connection, transaction, new Dictionary<string, string> { { "stateName", DeletedState.StateName } }));
         }
 
         public StatisticsDto GetStatistics()
@@ -479,19 +488,67 @@ where j.Id in @jobIds";
                 });
         }
 
-        private long GetNumberOfJobsByStateName(DbConnection connection, DbTransaction transaction, string stateName)
+        private long GetNumberOfJobsByStateName(DbConnection connection, DbTransaction transaction, Dictionary<string, string> parameters)
         {
+            var stateName = parameters["stateName"];
+            var filterString = parameters["filterString"];
+            var filterMethodString = parameters["filterMethodString"];
+
+            var queryParams = new string[]
+            {
+                  _storage.SchemaName,
+                  string.IsNullOrEmpty(filterString) ? string.Empty : " and Arguments LIKE '%'+@filterString+'%' ",
+                  string.IsNullOrEmpty(filterMethodString) ? string.Empty : " and InvocationData LIKE '%\"Method\":\"%'+@filterMethodString+'%\",\"ParameterTypes\"%' " ,
+                  !hasDateTimeParams(parameters) ? string.Empty : " and @startDateTime <= CreatedAt and CreatedAt <= @endDateTime "
+            };
+
+            var sqlFilterDates = PrepareSqlFilterDates(parameters);
             var sqlQuery = _jobListLimit.HasValue
-                ? $@"select count(j.Id) from (select top (@limit) Id from [{_storage.SchemaName}].Job where StateName = @state) as j"
-                : $@"select count(Id) from [{_storage.SchemaName}].Job where StateName = @state";
+                ? $@"select count(j.Id) from (select top (@limit) Id from [{queryParams[0]}].Job where StateName = @state {queryParams[1]} {queryParams[2]} {queryParams[3]}) as j"
+                : $@"select count(Id) from [{queryParams[0]}].Job where StateName = @state {queryParams[1]} {queryParams[2]} {queryParams[3]} ";
 
             var count = connection.Query<int>(
                  sqlQuery,
-                 new { state = stateName, limit = _jobListLimit },
+                 new { state = stateName, limit = _jobListLimit, filterString = filterString, filterMethodString = filterMethodString, startDateTime = sqlFilterDates[0], endDateTime = sqlFilterDates[1] },
                  transaction)
                  .Single();
 
             return count;
+        }
+        
+        private bool hasDateTimeParams(Dictionary<string,string> parameters)
+        {
+            if (parameters.Count <= 0) return false;
+
+            var startDate = parameters["startDate"];
+            var endDate = parameters["endDate"];
+            var startTime = parameters["startTime"];
+            var endTime = parameters["endTime"];
+
+            return !(string.IsNullOrEmpty(startDate) || 
+                string.IsNullOrEmpty(endDate) || 
+                string.IsNullOrEmpty(startTime) || 
+                string.IsNullOrEmpty(endTime) );
+        }
+
+        private string[] PrepareSqlFilterDates(Dictionary<string, string> parameters)
+        {
+            if ( !hasDateTimeParams(parameters) ) return new string[] { string.Empty, string.Empty };
+
+            var startDate = parameters["startDate"];
+            var endDate = parameters["endDate"];
+            var startTime = parameters["startTime"];
+            var endTime = parameters["endTime"];
+
+            var startDateData = startDate.Split('-');
+            var endDateData = endDate.Split('-');
+            var startTimeData = startTime.Split('-');
+            var endTimeData = endTime.Split('-');
+           
+            var start = new DateTime(int.Parse(startDateData[2]), int.Parse(startDateData[1]), int.Parse(startDateData[0]), int.Parse(startTimeData[0]), int.Parse(startTimeData[1]), 0).ToString("yyyy-MM-dd HH:mm:ss");
+            var end = new DateTime(int.Parse(endDateData[2]), int.Parse(endDateData[1]), int.Parse(endDateData[0]), int.Parse(endTimeData[0]), int.Parse(endTimeData[1]), 0).ToString("yyyy-MM-dd HH:mm:ss");
+
+            return new[]{ start, end };
         }
 
         private static Job DeserializeJob(string invocationData, string arguments)
@@ -508,32 +565,58 @@ where j.Id in @jobIds";
                 return null;
             }
         }
-
+        
         private JobList<TDto> GetJobs<TDto>(
             DbConnection connection,
             DbTransaction transaction,
-            int from,
-            int count,
+            Pager pager,
             string stateName,
             Func<SqlJob, Job, Dictionary<string, string>, TDto> selector)
         {
+            var parameters = new Dictionary<string,string>()
+            {
+                { "startDate", pager.JobsFilterStartDate },
+                { "endDate", pager.JobsFilterEndDate },
+                { "startTime", pager.JobsFilterStartTime },
+                { "endTime", pager.JobsFilterEndTime }
+            };
+
+            var queryParams = new string[]
+            {
+                  _storage.SchemaName,
+                  string.IsNullOrEmpty(pager.JobsFilterText) ? string.Empty : " and j.Arguments LIKE '%' + @filterString + '%' ",
+                  string.IsNullOrEmpty(pager.JobsFilterMethodText) ? string.Empty : " and J.InvocationData LIKE '%\"Method\":\"%'+@filterMethodString+'%\",\"ParameterTypes\"%' "  ,
+                  !hasDateTimeParams(parameters) ? string.Empty : " and @startDate <= j.CreatedAt and j.CreatedAt <= @endDate "
+            };
+
+            var sqlFilterDates = PrepareSqlFilterDates(parameters);
             string jobsSql = 
-$@"select * from (
+$@"select * from(
   select j.*, s.Reason as StateReason, s.Data as StateData, row_number() over (order by j.Id desc) as row_num
-  from [{_storage.SchemaName}].Job j with (forceseek)
-  left join [{_storage.SchemaName}].State s on j.StateId = s.Id
-  where j.StateName = @stateName
-) as j where j.row_num between @start and @end";
+  from [{queryParams[0]}].Job j with (forceseek)
+  left join [{queryParams[0]}].State s on j.StateId = s.Id
+  where j.StateName = @stateName {queryParams[1]} {queryParams[2]} {queryParams[3]} 
+) as j where j.row_num between @start and @end
+";
 
             var jobs = connection.Query<SqlJob>(
                         jobsSql,
-                        new { stateName = stateName, start = @from + 1, end = @from + count },
+                        new
+                        {
+                            stateName = stateName,
+                            start = @pager.FromRecord + 1,
+                            end = @pager.FromRecord + pager.RecordsPerPage,
+                            filterString = pager.JobsFilterText,
+                            filterMethodString = pager.JobsFilterMethodText,
+                            startDate = sqlFilterDates[0],
+                            endDate = sqlFilterDates[1]
+                        },
                         transaction)
                         .ToList();
 
             return DeserializeJobs(jobs, selector);
         }
-
+        
         private static JobList<TDto> DeserializeJobs<TDto>(
             ICollection<SqlJob> jobs,
             Func<SqlJob, Job, Dictionary<string, string>, TDto> selector)
