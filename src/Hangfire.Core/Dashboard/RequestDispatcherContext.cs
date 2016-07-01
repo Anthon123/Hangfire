@@ -29,7 +29,8 @@ namespace Hangfire.Dashboard
             [NotNull] IDictionary<string, object> owinEnvironment, 
             [NotNull] Match uriMatch,
             bool enableSearch = false,
-            bool relativeTime = false)
+            bool relativeTime = true,
+            bool specificJobRequeue = false)
         {
             if (jobStorage == null) throw new ArgumentNullException("jobStorage");
             if (owinEnvironment == null) throw new ArgumentNullException("owinEnvironment");
@@ -38,6 +39,7 @@ namespace Hangfire.Dashboard
             AppPath = appPath;
             RelativeTime = relativeTime;
             EnableSearch = enableSearch;
+            SpecificJobRequeue = specificJobRequeue;
             JobStorage = jobStorage;
             OwinEnvironment = owinEnvironment;
             UriMatch = uriMatch;
@@ -46,6 +48,7 @@ namespace Hangfire.Dashboard
         public string AppPath { get; private set; }
         public bool EnableSearch { get; private set; }
         public bool RelativeTime { get; private set; }
+        public bool SpecificJobRequeue { get; private set; }
         public JobStorage JobStorage { get; private set; }
         public IDictionary<string, object> OwinEnvironment { get; private set; } 
         public Match UriMatch { get; private set; }

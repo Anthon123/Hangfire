@@ -26,17 +26,18 @@ namespace Hangfire
             AppPath = "/";
             EnableSearch = false;
             RelativeTime = true;
+            SpecificJobRequeue = false;
             AuthorizationFilters = new[] { new LocalRequestsOnlyAuthorizationFilter() };
         }
 
         /// <summary>
         /// The path for the Back To Site link. Set to <see langword="null" /> in order to hide the Back To Site link.
+        /// Options for disabling/enabling new functionality on the dashboard.
         /// </summary>
         public string AppPath { get; set; }
-
         public bool EnableSearch { get; set; }
-
         public bool RelativeTime { get; set; }
+        public bool SpecificJobRequeue { get; set; }
 
         public IEnumerable<IAuthorizationFilter> AuthorizationFilters { get; set; }
     }

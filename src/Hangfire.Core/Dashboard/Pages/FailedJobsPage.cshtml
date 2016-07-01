@@ -163,7 +163,7 @@
                                 <td class="min-width">
                                     @if (job.Value.FailedAt.HasValue)
                                     {
-                                        @if (RelativeTime == true)
+                                        if (RelativeTime == true)
                                         {
                                             @Html.RelativeTime(job.Value.FailedAt.Value);
                                         }

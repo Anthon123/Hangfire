@@ -89,7 +89,8 @@ namespace Hangfire.Dashboard
                         context.Environment,
                         dispatcher.Item2,
                         options.EnableSearch,
-                        options.RelativeTime);
+                        options.RelativeTime,
+                        options.SpecificJobRequeue);
 
                     return dispatcher.Item1.Dispatch(dispatcherContext);
                 };
