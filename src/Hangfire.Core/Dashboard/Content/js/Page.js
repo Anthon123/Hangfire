@@ -198,6 +198,9 @@
                     
                     $('.js-jobs-list-command', container)
                         .prop('disabled', state === 'none-selected');
+
+                    $('.js-jobs-list-select', container)
+                        .prop('disabled', state === 'none-selected');
                 };
 
                 var updateListState = function() {
@@ -251,6 +254,7 @@
                     var $this = $(this);
                     var confirmText = $this.data('confirm');
 
+                    var id = this.id;
                     var jobs = $("input[name='jobs[]']:checked", container).map(function() {
                         return $(this).val();
                     }).get();
@@ -260,7 +264,7 @@
                             $this.button('loading');
                         }, 100);
 
-                        $.post($this.data('url'), { 'jobs[]': jobs }, function () {
+                        $.post($this.data('url'), { 'jobs[]': jobs , 'id' : id }, function () {
                             clearTimeout(loadingDelay);
                             $this.button('reset');
                             window.location.reload();

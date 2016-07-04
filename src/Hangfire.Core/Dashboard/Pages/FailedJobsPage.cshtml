@@ -1,5 +1,6 @@
 ﻿@* Generator: Template TypeVisibility: Internal GeneratePrettyNames: True *@
 @using System
+@using System.Collections.Generic
 @using Hangfire.Dashboard
 @using Hangfire.Dashboard.Pages
 @using Hangfire.States
@@ -43,6 +44,7 @@
     };
 
     var failedJobs = monitor.FailedJobs(pager);
+    var servers = monitor.Servers();
 }
 
 <div class="row">
@@ -67,23 +69,55 @@
             </div>
             <div class="js-jobs-list">
                 <div class="btn-toolbar btn-toolbar-top">
-                    <button class="js-jobs-list-command btn btn-sm btn-primary"
-                            data-url="@Url.To("/jobs/failed/requeue")"
-                            data-loading-text="Enqueueing..."
-                            disabled="disabled">
-                        <span class="glyphicon glyphicon-repeat"></span>
-                        Requeue jobs
-                    </button>
-                    <button class="js-jobs-list-command btn btn-sm btn-default"
-                            data-url="@Url.To("/jobs/failed/delete")"
-                            data-loading-text="Deleting..."
-                            data-confirm="Do you really want to DELETE ALL selected jobs?">
-                        <span class="glyphicon glyphicon-remove"></span>
-                        Delete selected
-                    </button>
-                    @if (EnableSearch == true)
-                    { <button data-toggle="collapse" data-target="#advanced-search-bar" class="btn btn-sm btn-success">Advanced Search</button> }
-                </div>
+                    <div class="btn-group">
+                        <button data-toggle="dropdown" data-target="#advanced-requeue-dropdown"
+                                class="js-jobs-list-select btn dropdown-toggle btn-sm btn-success"
+                                aria-haspopup="true" aria-expanded="false" disabled="disabled">
+                            <span class="glyphicon glyphicon-repeat"></span>
+                            Requeue jobs
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="js-jobs-list-command noselect" data-url="@Url.To("/jobs/failed/requeue")">
+                                    Any Queue
+                                </a>
+                            </li>
+                            <li class="divider" role="separator"></li>
+                            @foreach (var server in servers)
+                            {
+                                <li class="noselect dropdown-header">@(server.Name.ToUpperInvariant().Split(':')[0])</li>
+                                foreach (var queue in server.Queues)
+                                {
+                                    <li>
+                                        <a class="noselect js-jobs-list-command"
+                                           data-url="@Url.To("/jobs/failed/requeue")"
+                                           id="@queue">
+                                            @queue
+                                        </a>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                        <button class="js-jobs-list-command btn btn-sm btn-primary"
+                                data-url="@Url.To("/jobs/failed/requeue")"
+                                data-loading-text="Enqueueing..."
+                                disabled="disabled">
+                            <span class="glyphicon glyphicon-repeat"></span>
+                            Requeue jobs
+                        </button>
+                        <button class="js-jobs-list-command btn btn-sm btn-default"
+                                data-url="@Url.To("/jobs/failed/delete")"
+                                data-loading-text="Deleting..."
+                                data-confirm="Do you really want to DELETE ALL selected jobs?">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            Delete selected
+                        </button>
+                        @if (EnableSearch == true)
+                        {
+                            <button data-toggle="collapse" data-target="#advanced-search-bar" class="btn btn-sm btn-success">Advanced Search</button>
+                        }
+                    </div>
                 @if (EnableSearch == true)
                 {
                     <div id="advanced-search-bar" class="collapse well">
