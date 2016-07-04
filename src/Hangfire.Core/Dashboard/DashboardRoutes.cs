@@ -120,6 +120,11 @@ namespace Hangfire.Dashboard
                 "/jobs/processing/requeue",
                 (client, jobId) => client.Requeue(jobId, ProcessingState.StateName));
 
+            Routes.AddClientBatchCommand(
+                "/jobs/processing/specificrequeue",
+                (client, jobIdAndQueue) => client.Requeue(jobIdAndQueue.Split(new char[] { ':' })[0], ProcessingState.StateName, jobIdAndQueue.Split(new char[] { ':' })[1]));
+
+
             Routes.AddRazorPage("/jobs/scheduled", x => new ScheduledJobsPage());
 
             Routes.AddClientBatchCommand(
@@ -131,9 +136,14 @@ namespace Hangfire.Dashboard
                 (client, jobId) => client.Delete(jobId, ScheduledState.StateName));
 
             Routes.AddRazorPage("/jobs/succeeded", x => new SucceededJobs());
+
             Routes.AddClientBatchCommand(
                 "/jobs/succeeded/requeue",
                 (client, jobId) => client.Requeue(jobId, SucceededState.StateName));
+
+            Routes.AddClientBatchCommand(
+                "/jobs/succeeded/specificrequeue",
+                (client, jobIdAndQueue) => client.Requeue(jobIdAndQueue.Split(new char[] { ':' })[0], SucceededState.StateName, jobIdAndQueue.Split(new char[] { ':' })[1]));
 
             Routes.AddRazorPage("/jobs/failed", x => new FailedJobsPage());
 
@@ -154,6 +164,10 @@ namespace Hangfire.Dashboard
             Routes.AddClientBatchCommand(
                 "/jobs/deleted/requeue",
                 (client, jobId) => client.Requeue(jobId, DeletedState.StateName));
+
+            Routes.AddClientBatchCommand(
+                "/jobs/deleted/specificrequeue",
+                (client, jobIdAndQueue) => client.Requeue(jobIdAndQueue.Split(new char[] { ':' })[0], DeletedState.StateName, jobIdAndQueue.Split(new char[] { ':' })[1]));
 
             Routes.AddRazorPage("/jobs/awaiting", x => new AwaitingJobsPage());
             Routes.AddClientBatchCommand("/jobs/awaiting/enqueue", (client, jobId) => client.ChangeState(

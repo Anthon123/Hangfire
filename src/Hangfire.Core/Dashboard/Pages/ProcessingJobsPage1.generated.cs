@@ -144,29 +144,159 @@ WriteLiteral("            <div class=\"alert alert-info\">\r\n                No
             #line default
             #line hidden
 WriteLiteral("            <div class=\"js-jobs-list\">\r\n                <div class=\"btn-toolbar b" +
-"tn-toolbar-top\">\r\n                    <button class=\"js-jobs-list-command btn bt" +
-"n-sm btn-primary\"\r\n                            data-url=\"");
+"tn-toolbar-top\">\r\n");
 
 
             
-            #line 67 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
-                                 Write(Url.To("/jobs/processing/requeue"));
+            #line 66 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+                     if (SpecificJobRequeue == true)
+                    {
+
+            
+            #line default
+            #line hidden
+WriteLiteral(@"                        <div class=""btn-group"">
+                            <button data-toggle=""dropdown"" data-target=""#advanced-requeue-dropdown""
+                                    class=""js-jobs-list-select btn dropdown-toggle btn-sm btn-primary""
+                                    aria-haspopup=""true"" aria-expanded=""false"" disabled=""disabled"">
+                                <span class=""glyphicon glyphicon-repeat""></span>
+                                Requeue jobs
+                            </button>
+                            <ul class=""dropdown-menu"">
+                                <li>
+                                    <a class=""js-jobs-list-command noselect"" data-url=""");
+
+
+            
+            #line 77 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+                                                                                  Write(Url.To("/jobs/processing/requeue"));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\">\r\n                                        Default queue\r\n                      " +
+"              </a>\r\n                                </li>\r\n                     " +
+"           <li class=\"divider\" role=\"separator\"></li>\r\n");
+
+
+            
+            #line 82 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+                                 foreach (var server in servers)
+                                {
+
+            
+            #line default
+            #line hidden
+WriteLiteral("                                    <li class=\"noselect dropdown-header\">");
+
+
+            
+            #line 84 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+                                                                     Write(server.Name.ToUpperInvariant().Split(':')[0]);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("</li>\r\n");
+
+
+            
+            #line 85 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+                                    foreach (var queue in server.Queues)
+                                    {
+
+            
+            #line default
+            #line hidden
+WriteLiteral("                                        <li>\r\n                                   " +
+"         <a class=\"noselect js-jobs-list-command\"\r\n                             " +
+"                  data-url=\"");
+
+
+            
+            #line 89 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+                                                    Write(Url.To("/jobs/processing/specificrequeue"));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\"\r\n                                               id=\"");
+
+
+            
+            #line 90 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+                                              Write(queue);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\">\r\n                                                ");
+
+
+            
+            #line 91 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+                                           Write(queue);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\r\n                                            </a>\r\n                             " +
+"           </li>\r\n");
+
+
+            
+            #line 94 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+                                    }
+                                }
+
+            
+            #line default
+            #line hidden
+WriteLiteral("                            </ul>\r\n                        </div>\r\n");
+
+
+            
+            #line 98 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+                    }
+                    else
+                    {
+
+            
+            #line default
+            #line hidden
+WriteLiteral("                        <button class=\"js-jobs-list-command btn btn-sm btn-primar" +
+"y\"\r\n                                data-url=\"");
+
+
+            
+            #line 102 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+                                     Write(Url.To("/jobs/processing/requeue"));
 
             
             #line default
             #line hidden
 WriteLiteral(@"""
-                            data-loading-text=""Enqueueing...""
-                            disabled=""disabled"">
-                        <span class=""glyphicon glyphicon-repeat""></span>
-                        Requeue jobs
-                    </button>
-                    <button class=""js-jobs-list-command btn btn-sm btn-default""
-                            data-url=""");
+                                data-loading-text=""Enqueueing...""
+                                disabled=""disabled"">
+                            <span class=""glyphicon glyphicon-repeat""></span>
+                            Requeue jobs
+                        </button>
+");
 
 
             
-            #line 74 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 108 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+                    }
+
+            
+            #line default
+            #line hidden
+WriteLiteral("                    <button class=\"js-jobs-list-command btn btn-sm btn-default\"\r\n" +
+"                            data-url=\"");
+
+
+            
+            #line 110 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                  Write(Url.To("/jobs/processing/delete"));
 
             
@@ -183,7 +313,7 @@ WriteLiteral(@"""
 
 
             
-            #line 81 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 117 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                      if (EnableSearch == true)
                     {
             
@@ -194,7 +324,7 @@ WriteLiteral(" <button data-toggle=\"collapse\" data-target=\"#advanced-search-b
 
 
             
-            #line 82 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 118 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                                                                                                                                 }
 
             
@@ -204,7 +334,7 @@ WriteLiteral("                </div>\r\n");
 
 
             
-            #line 84 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 120 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                  if (EnableSearch == true)
                 {
 
@@ -226,7 +356,7 @@ WriteLiteral(@"                    <div id=""advanced-search-bar"" class=""colla
 
 
             
-            #line 97 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 133 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                       
                                         var currentDateTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
                                     
@@ -243,7 +373,7 @@ WriteLiteral(@"
 
 
             
-            #line 105 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 141 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                                                  Write(currentDateTime);
 
             
@@ -256,7 +386,7 @@ WriteLiteral("\" class=\"datetimeselector-start form-control\" id=\"startDateTim
 
 
             
-            #line 108 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 144 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                                                  Write(currentDateTime);
 
             
@@ -279,7 +409,7 @@ WriteLiteral(@""" class=""datetimeselector-end form-control"" id=""endDateTime""
 
 
             
-            #line 121 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 157 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                                                                                    Write(Url.To("/jobs/processing"));
 
             
@@ -296,7 +426,7 @@ WriteLiteral(@""">
 
 
             
-            #line 128 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 164 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                 }
 
             
@@ -306,7 +436,7 @@ WriteLiteral("\r\n                ");
 
 
             
-            #line 130 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 166 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
            Write(Html.PerPageSelector(pager));
 
             
@@ -330,7 +460,7 @@ WriteLiteral(@"
 
 
             
-            #line 144 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 180 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                      foreach (var job in processingJobs)
                     {
 
@@ -341,7 +471,7 @@ WriteLiteral("                        <tr class=\"js-jobs-list-row ");
 
 
             
-            #line 146 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 182 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                                 Write(!job.Value.InProcessingState ? "obsolete-data" : null);
 
             
@@ -351,7 +481,7 @@ WriteLiteral(" ");
 
 
             
-            #line 146 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 182 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                                                                                          Write(job.Value.InProcessingState ? "hover" : null);
 
             
@@ -361,7 +491,7 @@ WriteLiteral("\">\r\n                            <td>\r\n");
 
 
             
-            #line 148 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 184 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                  if (job.Value.InProcessingState)
                                 {
 
@@ -373,7 +503,7 @@ WriteLiteral("                                    <input type=\"checkbox\" class
 
 
             
-            #line 150 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 186 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                                                                                          Write(job.Key);
 
             
@@ -383,7 +513,7 @@ WriteLiteral("\"/>\r\n");
 
 
             
-            #line 151 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 187 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                 }
 
             
@@ -394,7 +524,7 @@ WriteLiteral("                            </td>\r\n                            <
 
 
             
-            #line 154 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 190 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                            Write(Html.JobIdLink(job.Key));
 
             
@@ -404,7 +534,7 @@ WriteLiteral("\r\n");
 
 
             
-            #line 155 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 191 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                  if (!job.Value.InProcessingState)
                                 {
 
@@ -416,7 +546,7 @@ WriteLiteral("                                    <span title=\"Job\'s state has
 
 
             
-            #line 158 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 194 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                 }
 
             
@@ -427,7 +557,7 @@ WriteLiteral("                            </td>\r\n                            <
 
 
             
-            #line 161 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 197 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                            Write(job.Value.ServerId.ToUpperInvariant());
 
             
@@ -437,7 +567,7 @@ WriteLiteral("\r\n                            </td>\r\n                         
 
 
             
-            #line 164 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 200 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                  if (servers.All(x => x.Name != job.Value.ServerId || x.Heartbeat < DateTime.UtcNow.AddMinutes(-1)))
                                 {
 
@@ -449,7 +579,7 @@ WriteLiteral("                                    <span title=\"Looks like the j
 
 
             
-            #line 167 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 203 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                 }
 
             
@@ -459,7 +589,7 @@ WriteLiteral("                                \r\n                              
 
 
             
-            #line 169 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 205 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                            Write(Html.JobNameLink(job.Key, job.Value.Job));
 
             
@@ -470,7 +600,7 @@ WriteLiteral("\r\n                            </td>\r\n                         
 
 
             
-            #line 172 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 208 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                  if (job.Value.StartedAt.HasValue)
                                 {
                                     
@@ -478,7 +608,7 @@ WriteLiteral("\r\n                            </td>\r\n                         
             #line default
             #line hidden
             
-            #line 174 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 210 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                      if (RelativeTime == true)
                                     {
                                         
@@ -486,14 +616,14 @@ WriteLiteral("\r\n                            </td>\r\n                         
             #line default
             #line hidden
             
-            #line 176 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 212 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                    Write(Html.RelativeTime(job.Value.StartedAt.Value));
 
             
             #line default
             #line hidden
             
-            #line 176 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 212 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                                                                      ;
                                     }
                                     else
@@ -503,7 +633,7 @@ WriteLiteral("\r\n                            </td>\r\n                         
             #line default
             #line hidden
             
-            #line 180 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 216 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                    Write(Html.Raw(job.Value.StartedAt.Value.ToString("dd/MM/yyyy HH:mm")));
 
             
@@ -511,7 +641,7 @@ WriteLiteral("\r\n                            </td>\r\n                         
             #line hidden
 
             
-            #line 180 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 216 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                                                                                                          ;
                                     }
                                 }
@@ -523,7 +653,7 @@ WriteLiteral("                            </td>\r\n                        </tr>
 
 
             
-            #line 185 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 221 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
                     }
 
             
@@ -533,7 +663,7 @@ WriteLiteral("                    </tbody>\r\n                </table>\r\n\r\n  
 
 
             
-            #line 189 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 225 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
            Write(Html.Paginator(pager));
 
             
@@ -543,7 +673,7 @@ WriteLiteral("\r\n            </div>\r\n");
 
 
             
-            #line 191 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
+            #line 227 "..\..\Dashboard\Pages\ProcessingJobsPage.cshtml"
         }
 
             
