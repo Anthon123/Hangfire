@@ -37,6 +37,7 @@ namespace Hangfire.Dashboard
             var form = await owinContext.ReadFormSafeAsync();
             var jobIds = form.GetValues("jobs[]");
 
+            var queueName = form.GetValues("queueName")?[0];
             if (jobIds == null)
             {
                 owinContext.Response.StatusCode = 422;
@@ -45,7 +46,13 @@ namespace Hangfire.Dashboard
 
             foreach (var jobId in jobIds)
             {
-                _command(context, jobId);
+
+                if (!string.IsNullOrEmpty(queueName))
+                {
+                    string jobIdAndQueue = jobId + ":" + queueName;
+                    _command(context, jobIdAndQueue);
+                }
+                else _command(context, jobId);
             }
 
             owinContext.Response.StatusCode = (int)HttpStatusCode.NoContent;

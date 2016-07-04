@@ -254,7 +254,7 @@
                     var $this = $(this);
                     var confirmText = $this.data('confirm');
 
-                    var id = this.id;
+                    var queueName = this.id;
                     var jobs = $("input[name='jobs[]']:checked", container).map(function() {
                         return $(this).val();
                     }).get();
@@ -264,7 +264,7 @@
                             $this.button('loading');
                         }, 100);
 
-                        $.post($this.data('url'), { 'jobs[]': jobs , 'id' : id }, function () {
+                        $.post($this.data('url'), { 'jobs[]': jobs , 'queueName' : queueName }, function () {
                             clearTimeout(loadingDelay);
                             $this.button('reset');
                             window.location.reload();

@@ -290,9 +290,20 @@ namespace Hangfire
             [NotNull] string jobId, 
             [CanBeNull] string fromState)
         {
+            return Requeue(client, jobId, fromState, null);
+        }
+
+        public static bool Requeue(
+            [NotNull] this IBackgroundJobClient client,
+            [NotNull] string jobId,            
+            [CanBeNull] string fromState,
+            [CanBeNull] string queueName)
+        {
             if (client == null) throw new ArgumentNullException("client");
 
             var state = new EnqueuedState();
+            if (!string.IsNullOrEmpty(queueName)) state.Queue = queueName;
+
             return client.ChangeState(jobId, state, fromState);
         }
 

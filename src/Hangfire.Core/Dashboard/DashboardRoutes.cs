@@ -142,6 +142,10 @@ namespace Hangfire.Dashboard
                 (client, jobId) => client.Requeue(jobId, FailedState.StateName));
 
             Routes.AddClientBatchCommand(
+                "/jobs/failed/specificrequeue",
+                (client, jobIdAndQueue) => client.Requeue(jobIdAndQueue.Split(new char[] { ':' })[0], FailedState.StateName, jobIdAndQueue.Split(new char[] { ':' })[1]));
+
+            Routes.AddClientBatchCommand(
                 "/jobs/failed/delete",
                 (client, jobId) => client.Delete(jobId, FailedState.StateName));
 
