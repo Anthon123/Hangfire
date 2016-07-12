@@ -155,69 +155,69 @@
                             </div>
                         </div>
                     </div>
-                }
+                                        }
 
                 @Html.PerPageSelector(pager)
-            </div>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th class="min-width">
-                                <input type="checkbox" class="js-jobs-list-select-all" />
-                            </th>
-                            <th class="min-width">@Strings.Common_Id</th>
-                            <th>@Strings.Common_Job</th>
-                            <th class="align-right">@Strings.DeletedJobsPage_Table_Deleted</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var job in jobs)
-                        {
-                            <tr class="js-jobs-list-row @(job.Value == null || !job.Value.InDeletedState ? " obsolete-data" : null) @(job.Value !=null && job.Value.InDeletedState && job.Value !=null ? "hover" : null)">
-                                <td>
-                                    @if (job.Value == null || job.Value.InDeletedState)
-                                    {
-                                        <input type="checkbox" class="js-jobs-list-checkbox" name="jobs[]" value="@job.Key" />
-                                    }
-                                </td>
-                                <td class="min-width">
-                                    @Html.JobIdLink(job.Key)
-                                    @if (job.Value != null && !job.Value.InDeletedState)
-                                    {
-                                        <span title="@Strings.Common_JobStateChanged_Text" class="glyphicon glyphicon-question-sign"></span>
-                                    }
-                                </td>
-
-                                @if (job.Value == null)
-                                {
-                                    <td colspan="2"><em>@Strings.Common_JobExpired</em></td>
-                                }
-                                else
-                                {
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="min-width">
+                                    <input type="checkbox" class="js-jobs-list-select-all" />
+                                </th>
+                                <th class="min-width">@Strings.Common_Id</th>
+                                <th>@Strings.Common_Job</th>
+                                <th class="align-right">@Strings.DeletedJobsPage_Table_Deleted</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var job in jobs)
+                            {
+                                <tr class="js-jobs-list-row @(job.Value == null || !job.Value.InDeletedState ? " obsolete-data" : null) @(job.Value !=null && job.Value.InDeletedState && job.Value !=null ? "hover" : null)">
                                     <td>
-                                        @Html.JobNameLink(job.Key, job.Value.Job)
-                                    </td>
-                                    <td class="align-right">
-                                        @if (job.Value.DeletedAt.HasValue)
+                                        @if (job.Value == null || job.Value.InDeletedState)
                                         {
-                                            if (RelativeTime == true)
-                                            {
-                                                @Html.RelativeTime(job.Value.DeletedAt.Value);
-                                            }
-                                            else
-                                            {
-                                                @Html.Raw(job.Value.DeletedAt.Value.ToString("dd/MM/yyyy HH:mm"));
-                                            }
+                                            <input type="checkbox" class="js-jobs-list-checkbox" name="jobs[]" value="@job.Key" />
                                         }
                                     </td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                                    <td class="min-width">
+                                        @Html.JobIdLink(job.Key)
+                                        @if (job.Value != null && !job.Value.InDeletedState)
+                                        {
+                                            <span title="@Strings.Common_JobStateChanged_Text" class="glyphicon glyphicon-question-sign"></span>
+                                        }
+                                    </td>
+
+                                    @if (job.Value == null)
+                                    {
+                                        <td colspan="2"><em>@Strings.Common_JobExpired</em></td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            @Html.JobNameLink(job.Key, job.Value.Job)
+                                        </td>
+                                        <td class="align-right">
+                                            @if (job.Value.DeletedAt.HasValue)
+                                            {
+                                                if (RelativeTime == true)
+                                                {
+                                                    @Html.RelativeTime(job.Value.DeletedAt.Value);
+                                                }
+                                                else
+                                                {
+                                                    @Html.Raw(job.Value.DeletedAt.Value.ToString("dd/MM/yyyy HH:mm"));
+                                                }
+                                            }
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
             @Html.Paginator(pager)
-        }
+            }
+        </div>
     </div>
-</div>

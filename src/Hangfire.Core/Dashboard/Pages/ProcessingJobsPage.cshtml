@@ -1,7 +1,6 @@
-﻿* Generator: Template TypeVisibility: Internal GeneratePrettyNames: True *@
+﻿@* Generator: Template TypeVisibility: Internal GeneratePrettyNames: True *@
 @using System
 @using System.Collections.Generic
-@using System.Linq
 @using Hangfire.Dashboard
 @using Hangfire.Dashboard.Pages
 @using Hangfire.Dashboard.Resources
@@ -202,9 +201,20 @@
                                         @Html.ServerId(job.Value.ServerId)
                                     </td>
                                     <td>
-                                        @if (servers.All(x => x.Name != job.Value.ServerId || x.Heartbeat < DateTime.UtcNow.AddMinutes(-1)))
-                                        {
-                                            <span title="@Strings.ProcessingJobsPage_Aborted" class="glyphicon glyphicon-warning-sign" style="font-size: 10px;"></span>
+                                        @{
+                                            bool pass = true;
+                                            foreach (var server in servers)
+                                            {
+                                                if (pass)
+                                                {
+                                                    pass = (server.Name != job.Value.ServerId || server.Heartbeat < DateTime.UtcNow.AddMinutes(-1));
+                                                }
+                                            }
+
+                                            if (pass)
+                                            {
+                                                <span title="@Strings.ProcessingJobsPage_Aborted" class="glyphicon glyphicon-warning-sign" style="font-size: 10px;"></span>
+                                            }
                                         }
 
                                         @Html.JobNameLink(job.Key, job.Value.Job)
