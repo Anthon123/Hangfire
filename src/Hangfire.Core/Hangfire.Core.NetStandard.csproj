@@ -288,6 +288,9 @@
     <Compile Include="Dashboard\RouteCollectionExtensions.cs" />
     <Compile Include="Dashboard\UrlHelper.cs" />
     <Compile Include="DisableConcurrentExecutionAttribute.cs" />
+    <Compile Include="Email\EmailStorage.cs" />
+    <Compile Include="Email\EventTypes.cs" />
+    <Compile Include="Email\INotifier.cs" />
     <Compile Include="GlobalConfiguration.cs" />
     <Compile Include="GlobalConfigurationExtensions.cs" />
     <Compile Include="GlobalJobFilters.cs" />
@@ -296,6 +299,7 @@
     <Compile Include="IGlobalConfiguration.cs" />
     <Compile Include="IJobCancellationToken.cs" />
     <Compile Include="IRecurringJobManager.cs" />
+    <Compile Include="IWorkerObserver.cs" />
     <Compile Include="JobActivator.cs" />
     <Compile Include="JobActivatorContext.cs" />
     <Compile Include="JobActivatorScope.cs" />
@@ -334,6 +338,7 @@
     <Compile Include="Server\IServerExceptionFilter.cs" />
     <Compile Include="Server\IServerFilter.cs" />
     <Compile Include="Server\IThrottler.cs" />
+    <Compile Include="Server\IWorkerObservable.cs" />
     <Compile Include="Server\JobAbortedException.cs" />
     <Compile Include="Server\JobPerformanceException.cs" />
     <Compile Include="Server\PerformContext.cs" />

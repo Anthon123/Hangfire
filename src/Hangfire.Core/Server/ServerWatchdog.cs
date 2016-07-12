@@ -16,6 +16,7 @@
 
 using System;
 using Hangfire.Logging;
+using Hangfire.Email;
 
 namespace Hangfire.Server
 {
@@ -39,9 +40,19 @@ namespace Hangfire.Server
         {
             using (var connection = context.Storage.GetConnection())
             {
+                var timedOutServers = connection.GetTimedOutServerId(_serverTimeout);
                 var serversRemoved = connection.RemoveTimedOutServers(_serverTimeout);
                 if (serversRemoved != 0)
                 {
+                    string msg = "The servers with machine name and server ID: \n";
+                    foreach (var item in timedOutServers)
+                    {
+                        msg += '\n' + item.Split(':')[0] + " ::  " + item.Split(':')[1] + ", ";
+                    }
+                    msg += "\n \n have timed out.";
+
+                    EmailStorage.Current.NotifyAll(EventTypes.Events.ServerTimeout, "Server timeout", msg);                    
+
                     Logger.Info($"{serversRemoved} servers were removed due to timeout");
                 }
             }

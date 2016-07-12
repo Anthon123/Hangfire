@@ -1,4 +1,9 @@
-{
-  "runtimes": { "win": { } },
-  "frameworks": { "net45": { } }
+﻿{
+  "runtimes": {
+    "win": {}
+  },
+  "frameworks": {
+    "net45": {}
+  },
+  "dependencies": {}
 }

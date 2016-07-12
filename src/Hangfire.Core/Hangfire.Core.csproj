@@ -63,6 +63,7 @@
       <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs">
@@ -91,6 +92,10 @@
     <Compile Include="Dashboard\Owin\OwinDashboardContext.cs" />
     <Compile Include="Dashboard\Owin\OwinDashboardRequest.cs" />
     <Compile Include="Dashboard\Owin\OwinDashboardResponse.cs" />
+    <Compile Include="Email\EmailStorage.cs" />
+    <Compile Include="Email\EventTypes.cs" />
+    <Compile Include="Email\INotifier.cs" />
+    <Compile Include="IWorkerObserver.cs" />
     <Compile Include="Obsolete\RequestDispatcherWrapper.cs" />
     <Compile Include="JobActivatorContext.cs" />
     <Compile Include="IRecurringJobManager.cs" />
@@ -113,6 +118,7 @@
     <Compile Include="Server\IBackgroundProcess.cs" />
     <Compile Include="Server\IBackgroundProcessWrapper.cs" />
     <Compile Include="Server\InfiniteLoopProcess.cs" />
+    <Compile Include="Server\IWorkerObservable.cs" />
     <Compile Include="Server\ServerProcessExtensions.cs" />
     <Compile Include="Server\BackgroundProcessingServer.cs" />
     <Compile Include="MoreLinq\MoreEnumerable.Pairwise.cs" />

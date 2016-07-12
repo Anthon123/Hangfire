@@ -9,5 +9,7 @@
   "projectFileDependencyGroups": {
     "": [],
     ".NETFramework,Version=v4.5": []
-  }
+  },
+  "tools": {},
+  "projectFileToolGroups": {}
 }
