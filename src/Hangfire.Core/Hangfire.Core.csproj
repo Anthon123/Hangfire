@@ -92,6 +92,11 @@
     <Compile Include="Dashboard\Owin\OwinDashboardContext.cs" />
     <Compile Include="Dashboard\Owin\OwinDashboardRequest.cs" />
     <Compile Include="Dashboard\Owin\OwinDashboardResponse.cs" />
+    <Compile Include="Dashboard\Pages\ProcessingJobsPage2.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProcessingJobsPage.cshtml</DependentUpon>
+    </Compile>
     <Compile Include="Email\EmailStorage.cs" />
     <Compile Include="Email\EventTypes.cs" />
     <Compile Include="Email\INotifier.cs" />
@@ -240,11 +245,6 @@
     </Compile>
     <Compile Include="Dashboard\Pages\LayoutPage.generated.cs">
       <DependentUpon>LayoutPage.cshtml</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Dashboard\Pages\ProcessingJobsPage.generated.cs">
-      <DependentUpon>ProcessingJobsPage.cshtml</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
@@ -480,7 +480,7 @@
     </None>
     <None Include="Dashboard\Pages\ProcessingJobsPage.cshtml">
       <Generator>RazorGenerator</Generator>
-      <LastGenOutput>ProcessingJobsPage.generated.cs</LastGenOutput>
+      <LastGenOutput>ProcessingJobsPage2.generated.cs</LastGenOutput>
     </None>
     <None Include="Dashboard\Pages\QueuesPage.cshtml">
       <Generator>RazorGenerator</Generator>
@@ -593,6 +593,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Dashboard\Content\js\jquery.datetimepicker.full.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

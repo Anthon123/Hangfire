@@ -28,6 +28,7 @@ namespace Hangfire
             Authorization = new[] { new LocalRequestsOnlyAuthorizationFilter() };
             EnableSearch = false;
             RelativeTime = true;
+            SpecificJobRequeue = false;
             StatsPollingInterval = 2000;
         }
 
@@ -46,6 +47,8 @@ namespace Hangfire
         public bool EnableSearch { get; set; }
 
         public bool RelativeTime { get; set; }
+
+        public bool SpecificJobRequeue { get; set; }
 
         /// <summary>
         /// The interval the /stats endpoint should be polled with.

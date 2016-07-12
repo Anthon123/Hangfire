@@ -40,6 +40,9 @@ namespace Hangfire.Dashboard
         public async Task Dispatch(DashboardContext context)
         {
             var jobIds = await context.Request.GetFormValuesAsync("jobs[]");
+            var queueName_list = await context.Request.GetFormValuesAsync("queueName");
+            var queueName = queueName_list?[0]; 
+
             if (jobIds.Count == 0)
             {
                 context.Response.StatusCode = 422;
@@ -48,7 +51,12 @@ namespace Hangfire.Dashboard
 
             foreach (var jobId in jobIds)
             {
-                _command(context, jobId);
+                if (!string.IsNullOrEmpty(queueName))
+                {
+                    string jobIdAndQueue = jobId + ":" + queueName;
+                    _command(context, jobIdAndQueue);
+                }
+                else _command(context, jobId);
             }
 
             context.Response.StatusCode = (int)HttpStatusCode.NoContent;
